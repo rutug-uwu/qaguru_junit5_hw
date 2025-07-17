@@ -2,6 +2,7 @@ package tests;
 
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,8 +29,8 @@ public class ParameterizedWebTests {
         Configuration.pageLoadTimeout = 10000;
     }
 
-    @AfterAll
-    static void tearDown() {
+    @AfterEach
+    void tearDown() {
         closeWebDriver();
     }
 
@@ -38,7 +39,7 @@ public class ParameterizedWebTests {
     })
     @ParameterizedTest(name = "Для поиского запроса {0} должен возвращаться не пустой список карточек")
     @Tag("WEB")
-    void searchReturnsNonEmptyResults(String searchText) {
+    void searchReturnsNonEmptyResultsTest(String searchText) {
         open("https://mm.ru/");
         $("[data-test-id='input__search']").setValue(searchText).pressEnter();
         $$("[data-test-id='list__products'] div").shouldBe(sizeGreaterThan(0));
@@ -51,13 +52,13 @@ public class ParameterizedWebTests {
     }, delimiter = '/')
     @ParameterizedTest(name = "Для поиского запроса {0} должен возвращаться заголовок {1}")
     @Tag("WEB")
-    void searchResultShouldHaveExpectedTitle(String searchText, String expectedTitle) {
+    void searchResultShouldHaveExpectedTitleTest(String searchText, String expectedTitle) {
         open("https://mm.ru/");
         $("[data-test-id='input__search']").setValue(searchText).pressEnter();
         $("[data-test-id='text__title']").shouldHave(text(expectedTitle));
     }
 
-    static Stream<Arguments> searchResultShouldHaveExpectedSubsections() {
+    static Stream<Arguments> searchResultShouldHaveExpectedSubsectionsTest() {
         return Stream.of(
                 Arguments.of("Одежда", List.of("Главная", "Все категории", "Одежда")),
                 Arguments.of("Мебель", List.of("Главная", "Все категории", "Товары для дома", "Мебель")),
@@ -68,7 +69,7 @@ public class ParameterizedWebTests {
     @MethodSource
     @ParameterizedTest(name = "Для поиского запроса {0} должны возвращаться следующие подразделы: {1}")
     @Tag("WEB")
-    void searchResultShouldHaveExpectedSubsections(String searchText, List<String> expectedSubsections) {
+    void searchResultShouldHaveExpectedSubsectionsTest(String searchText, List<String> expectedSubsections) {
         open("https://mm.ru/");
         $("[data-test-id='input__search']").setValue(searchText).pressEnter();
         $(".breadcrumbs-list").$$("[data-test-id='list__breadcrumb']").shouldHave(texts(expectedSubsections));
